@@ -16,7 +16,7 @@ public:
 
 private:
   static const int M=1000;
-  static const int L=200;
+  static const int L=600;
   /**basic note**/
   /**1.offset of tree meta is 0
    * 2.set array number as L+1 and M+1 for the convenience of insertion**/
