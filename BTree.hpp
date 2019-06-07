@@ -15,15 +15,17 @@ public:
     class const_iterator;
 
 private:
-  static const int M=100;
-  static const int L=100;
+  static const int M=1000;
+  static const int L=200;
   /**basic note**/
   /**1.offset of tree meta is 0
    * 2.set array number as L+1 and M+1 for the convenience of insertion**/
 
   struct namestring{
       char *str;
-      namestring(){str=new char[20];}
+      namestring(){
+          str=new char[20];
+      }
       ~namestring(){if(str!=NULL)delete str;}
       void setname(char *ch){
           int i=0;
@@ -301,7 +303,7 @@ public:
 
 public:
   // Default Constructor and Copy Constructor
-  BTree(char *s) {
+  BTree(char *s="mybpt") {
       fname.setname(s);
       fp=NULL;
       openfile();
