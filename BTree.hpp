@@ -15,8 +15,8 @@ public:
     class const_iterator;
 
 private:
-  static const int M=1000;
-  static const int L=600;
+  static const int M=800;
+  static const int L=500;
   /**basic note**/
   /**1.offset of tree meta is 0
    * 2.set array number as L+1 and M+1 for the convenience of insertion**/
@@ -103,11 +103,11 @@ public:
       }
   }
   void readfile(void *dest,offset_t off,int num,int size){
-      if(fseek(fp,off,SEEK_SET))throw fault_in_seek_offset();
+      fseek(fp,off,SEEK_SET);
       fread(dest,size,num,fp);
   }
   void writefile(void *dest,offset_t off,int num,int size){
-      if(fseek(fp,off,SEEK_SET))throw fault_in_seek_offset();
+      fseek(fp,off,SEEK_SET);
       fwrite(dest,size,num,fp);
   }
 
