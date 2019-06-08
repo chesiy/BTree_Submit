@@ -430,9 +430,7 @@ public:
         bool modify(const Key& key){
 
         }
-     /*   iterator(){
-            bt=NULL;index=0;offset=0;
-        }*/
+
         iterator(BTree *t=NULL,offset_t off=0,int in=0) {
             bt=t;index=in;offset=off;
         }
@@ -448,22 +446,69 @@ public:
         }
         // Return a new iterator which points to the n-next elements
         iterator operator++(int) {
-            // Todo iterator++
+            iterator ret=*this;
+            if(*this==bt->end()){
+                ret.bt=NULL;ret.index=0;ret.offset=0;
+                return ret;
+            }
+            leafNode lp;
+            bt->readfile(&lp,offset,1,sizeof(leafNode));
+            if(index==lp.inside-1){
+                if(lp.next==0)++index;
+                else{
+                    offset=lp.next;
+                    index=0;
+                }
+            }else{++index;}
+            return ret;
         }
         iterator& operator++() {
-            // Todo ++iterator
+            if(*this==bt->end()){
+                bt=NULL;index=0;offset=0;
+                return *this;
+            }
+            leafNode lp;
+            bt->readfile(&lp,offset,1,sizeof(leafNode));
+            if(index==lp.inside-1){
+                if(lp.next==0)++index;
+                else{
+                    offset=lp.next;
+                    index=0;
+                }
+            }else{++index;}
+            return *this;
         }
         iterator operator--(int) {
-            // Todo iterator--
+            iterator ret=*this;
+            if(*this==bt->begin()){
+                ret.bt=NULL;ret.index=0;ret.offset=0;
+                return ret;
+            }
+            leafNode lp,lq;
+            bt->readfile(&lp,offset,1,sizeof(leafNode));
+            if(index==0){
+                    offset=lp.prev;
+                    bt->readfile(&lq,lp.prev,1, sizeof(leafNode));
+                    index=lq.inside-1;
+            }else{--index;}
+            return ret;
         }
         iterator& operator--() {
-            // Todo --iterator
+            if(*this==bt->begin()){
+                bt=NULL;index=0;offset=0;
+                return *this;
+            }
+            leafNode lp,lq;
+            bt->readfile(&lp,offset,1,sizeof(leafNode));
+            if(index==0){
+                offset=lp.prev;
+                bt->readfile(&lq,lp.prev,1, sizeof(leafNode));
+                index=lq.inside-1;
+            }else{--index;}
+            return *this;
         }
         // Overloaded of operator '==' and '!='
         // Check whether the iterators are same
-        value_type& operator*() const {
-            // Todo operator*, return the <K,V> of iterator
-        }
         bool operator==(const iterator& rhs) const {
             return (offset==rhs.offset&&bt==rhs.bt&&index==rhs.index);
         }
@@ -497,9 +542,7 @@ public:
         const_iterator(BTree *t=NULL,offset_t off=0,int in=0) {
             bt=t;index=in;offset=off;
         }
-     /*   const_iterator(){
-            bt=NULL;index=0;offset=0;
-        }*/
+
         const_iterator(const const_iterator& other) {
             bt=other.bt;
             offset=other.offset;
@@ -514,6 +557,68 @@ public:
             leafNode p;
             bt->readfile(&p,offset,1, sizeof(leafNode));
             return p.data[index].second;
+        }
+        const_iterator operator++(int) {
+            const_iterator ret=*this;
+            if(*this==bt->end()){
+                ret.bt=NULL;ret.index=0;ret.offset=0;
+                return ret;
+            }
+            leafNode lp;
+            bt->readfile(&lp,offset,1,sizeof(leafNode));
+            if(index==lp.inside-1){
+                if(lp.next==0)++index;
+                else{
+                    offset=lp.next;
+                    index=0;
+                }
+            }else{++index;}
+            return ret;
+        }
+        const_iterator& operator++() {
+            if(*this==bt->end()){
+                bt=NULL;index=0;offset=0;
+                return *this;
+            }
+            leafNode lp;
+            bt->readfile(&lp,offset,1,sizeof(leafNode));
+            if(index==lp.inside-1){
+                if(lp.next==0)++index;
+                else{
+                    offset=lp.next;
+                    index=0;
+                }
+            }else{++index;}
+            return *this;
+        }
+        const_iterator operator--(int) {
+            const_iterator ret=*this;
+            if(*this==bt->begin()){
+                ret.bt=NULL;ret.index=0;ret.offset=0;
+                return ret;
+            }
+            leafNode lp,lq;
+            bt->readfile(&lp,offset,1,sizeof(leafNode));
+            if(index==0){
+                offset=lp.prev;
+                bt->readfile(&lq,lp.prev,1, sizeof(leafNode));
+                index=lq.inside-1;
+            }else{--index;}
+            return ret;
+        }
+        const_iterator& operator--() {
+            if(*this==bt->begin()){
+                bt=NULL;index=0;offset=0;
+                return *this;
+            }
+            leafNode lp,lq;
+            bt->readfile(&lp,offset,1,sizeof(leafNode));
+            if(index==0){
+                offset=lp.prev;
+                bt->readfile(&lq,lp.prev,1, sizeof(leafNode));
+                index=lq.inside-1;
+            }else{--index;}
+            return *this;
         }
         bool operator==(const iterator& rhs) const {
             return (offset==rhs.offset&&bt==rhs.bt&&index==rhs.index);
